@@ -2,6 +2,7 @@ package enum_test
 
 import (
 	"encoding/json"
+	"errors"
 	"testing"
 
 	"github.com/antklim/go-misc/enum"
@@ -45,18 +46,49 @@ func TestUser_MarshallJSON(t *testing.T) {
 }
 
 func TestUser_UnmarshallJSON(t *testing.T) {
-	t.Skip("should unmarshall JSON to User structure")
-
 	testCases := []struct {
-		desc string
+		desc     string
+		data     string
+		expected enum.User
+		err      error
 	}{
 		{
-			desc: "",
+			desc:     "User with unknwown gender",
+			data:     `{"age":10,"gender":"unknown"}`,
+			expected: enum.User{Age: 10, Gender: enum.Unknown},
+			err:      nil,
+		},
+		{
+			desc:     "User male",
+			data:     `{"age":10,"gender":"male"}`,
+			expected: enum.User{Age: 10, Gender: enum.Male},
+			err:      nil,
+		},
+		{
+			desc:     "User female",
+			data:     `{"age":10,"gender":"female"}`,
+			expected: enum.User{Age: 10, Gender: enum.Female},
+			err:      nil,
+		},
+		{
+			desc:     "User with other gender",
+			data:     `{"age":10,"gender":"other"}`,
+			expected: enum.User{Age: 10, Gender: enum.Other},
+			err:      nil,
+		},
+		{
+			desc:     "User with unsupported gender",
+			data:     `{"age":10,"gender":"NA"}`,
+			expected: enum.User{Age: 10},
+			err:      errors.New("unsupported gender NA"),
 		},
 	}
 	for _, tC := range testCases {
 		t.Run(tC.desc, func(t *testing.T) {
-
+			actual := enum.User{}
+			err := json.Unmarshal([]byte(tC.data), &actual)
+			assert.Equal(t, tC.err, err)
+			assert.Equal(t, tC.expected, actual)
 		})
 	}
 }

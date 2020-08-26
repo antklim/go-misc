@@ -28,7 +28,7 @@ func (g Gender) MarshalJSON() ([]byte, error) {
 	return json.Marshal(val)
 }
 
-func (g Gender) UnmarshalJSON(data []byte) error {
+func (g *Gender) UnmarshalJSON(data []byte) error {
 	var s string
 	if err := json.Unmarshal(data, &s); err != nil {
 		return err
@@ -36,19 +36,19 @@ func (g Gender) UnmarshalJSON(data []byte) error {
 
 	switch s {
 	case "unknown":
-		g = Unknown
+		*g = Unknown
 		break
 	case "male":
-		g = Male
+		*g = Male
 		break
 	case "female":
-		g = Female
+		*g = Female
 		break
 	case "other":
-		g = Other
+		*g = Other
 		break
 	default:
-		return fmt.Errorf("unsupported gender value %s", s)
+		return fmt.Errorf("unsupported gender %s", s)
 	}
 
 	return nil
