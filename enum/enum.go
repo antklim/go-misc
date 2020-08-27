@@ -34,22 +34,36 @@ func (g *Gender) UnmarshalJSON(data []byte) error {
 		return err
 	}
 
-	switch s {
-	case "unknown":
-		*g = Unknown
-		break
-	case "male":
-		*g = Male
-		break
-	case "female":
-		*g = Female
-		break
-	case "other":
-		*g = Other
-		break
-	default:
-		return fmt.Errorf("unsupported gender %s", s)
+	gg, err := strToGender(s)
+	if err != nil {
+		return err
 	}
+
+	*g = gg
+
+	return nil
+}
+
+func (g Gender) MarshalYAML() (interface{}, error) {
+	val, ok := lookup(g)
+	if !ok {
+		return nil, fmt.Errorf("no value for %q", g)
+	}
+	return val, nil
+}
+
+func (g *Gender) UnmarshalYAML(unmarshal func(interface{}) error) error {
+	var s string
+	if err := unmarshal(&s); err != nil {
+		return err
+	}
+
+	gg, err := strToGender(s)
+	if err != nil {
+		return err
+	}
+
+	*g = gg
 
 	return nil
 }
@@ -72,4 +86,19 @@ func lookup(g Gender) (string, bool) {
 		return "", false
 	}
 	return genderName[g], true
+}
+
+func strToGender(s string) (Gender, error) {
+	switch s {
+	case "unknown":
+		return Unknown, nil
+	case "male":
+		return Male, nil
+	case "female":
+		return Female, nil
+	case "other":
+		return Other, nil
+	default:
+		return -1, fmt.Errorf("unsupported gender %s", s)
+	}
 }
