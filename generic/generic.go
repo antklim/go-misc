@@ -1,5 +1,9 @@
 package generic
 
+import (
+	"encoding/json"
+)
+
 type Student struct {
 	Name    Name   `json:"name"`    // generic name
 	Year    int    `json:"year"`    // year of study
@@ -12,6 +16,30 @@ type Name struct {
 	*NameV2
 }
 
+func (n *Name) UnmarshalJSON(data []byte) error {
+	var temp interface{}
+
+	if err := json.Unmarshal(data, &temp); err != nil {
+		return err
+	}
+
+	switch v := temp.(type) {
+	case string:
+		nv1 := NameV1(v)
+		n.NameV1 = &nv1
+		n.NameV2 = nil
+	default:
+		var nv2 NameV2
+		if err := json.Unmarshal(data, &nv2); err != nil {
+			return err
+		}
+		n.NameV1 = nil
+		n.NameV2 = &nv2
+	}
+
+	return nil
+}
+
 type NameV1 string
 type NameV2 struct {
 	FirstName string `json:"firstName"`
@@ -22,51 +50,3 @@ type Course struct {
 	Students []Name `json:"students"`
 	Year     string `json:"year"`
 }
-
-/**
-Valid JSON payloads
-
-// Student 1
-{
-	"name": "john doe",
-	"year": 1,
-	"faculty": "computer science"
-}
-
-// Student 2
-{
-	"name": {
-		"firstName": "will",
-		"lastName": "smith"
-	},
-	"year": 1,
-	"faculty": "computer science"
-}
-
-// Course 1
-{
-	"students": ["john doe", "will smith"],
-	"year": "2020-2021"
-}
-
-// Course 2
-{
-	"students": ["john doe", {
-		"firstName": "will",
-		"lastName": "smith"
-	}],
-	"year": "2021-2022"
-}
-
-// Course 3
-{
-	"students": [{
-		"firstName": "john",
-		"lastName": "doe"
-	}, {
-		"firstName": "will",
-		"lastName": "smith"
-	}],
-	"year": "2022-2023"
-}
-*/
