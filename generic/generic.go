@@ -40,6 +40,17 @@ func (n *Name) UnmarshalJSON(data []byte) error {
 	return nil
 }
 
+func (n Name) MarshalJSON() ([]byte, error) {
+	switch {
+	case n.NameV1 != nil:
+		return json.Marshal(n.NameV1)
+	case n.NameV2 != nil:
+		return json.Marshal(n.NameV2)
+	default:
+		return json.Marshal(nil)
+	}
+}
+
 type NameV1 string
 type NameV2 struct {
 	FirstName string `json:"firstName"`

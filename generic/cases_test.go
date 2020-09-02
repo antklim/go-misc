@@ -50,15 +50,21 @@ Valid JSON payloads
 }
 */
 
-type genericNameTest struct {
+type genericNameUnmarshalTest struct {
 	desc     string
 	payload  string
 	expected generic.Name
 }
 
+type genericNameMarshalTest struct {
+	desc     string
+	name     generic.Name
+	expected string
+}
+
 var n1 generic.NameV1 = "john doe"
 
-var genericNameTests = []genericNameTest{
+var genericNameUnmarshalTests = []genericNameUnmarshalTest{
 	{
 		"unmarshal string to generic name",
 		`"john doe"`,
@@ -68,5 +74,18 @@ var genericNameTests = []genericNameTest{
 		"unmarshal object to generic name",
 		`{"firstName": "john", "lastName": "doe"}`,
 		generic.Name{nil, &generic.NameV2{FirstName: "john", LastName: "doe"}},
+	},
+}
+
+var genericNameMarshalTests = []genericNameMarshalTest{
+	{
+		"marshal name v1",
+		generic.Name{&n1, nil},
+		`"john doe"`,
+	},
+	{
+		"marshal name v2",
+		generic.Name{nil, &generic.NameV2{FirstName: "john", LastName: "doe"}},
+		`{"firstName":"john","lastName":"doe"}`,
 	},
 }
