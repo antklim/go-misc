@@ -57,6 +57,18 @@ type studentMarshalTest struct {
 	expected string
 }
 
+type courseUnmarshalTest struct {
+	desc     string
+	payload  string
+	expected generic.Course
+}
+
+type courseMarshalTest struct {
+	desc     string
+	course   generic.Course
+	expected string
+}
+
 var n1 generic.NameV1 = "john doe"
 
 var genericNameUnmarshalTests = []genericNameUnmarshalTest{
@@ -119,5 +131,65 @@ var studentMarshalTests = []studentMarshalTest{
 		"marshal student with extended name",
 		generic.Student{generic.Name{nil, &generic.NameV2{FirstName: "will", LastName: "smith"}}, 1, "computer science"},
 		`{"name":{"firstName":"will","lastName":"smith"},"year":1,"faculty":"computer science"}`,
+	},
+}
+
+var courseUnmarshalTests = []courseUnmarshalTest{
+	{
+		"unmarshal course with students with simple names",
+		`{
+			"students": ["john doe"],
+			"year": "first year"
+		}`,
+		generic.Course{[]generic.Name{{&n1, nil}}, "first year"},
+	},
+	{
+		"unmarshal course with students with extended name",
+		`{
+			"students": [
+				{
+					"firstName": "will",
+					"lastName": "smith"
+				}
+			],
+			"year": "second year"
+		}`,
+		generic.Course{[]generic.Name{{nil, &generic.NameV2{FirstName: "will", LastName: "smith"}}}, "second year"},
+	},
+	{
+		"unmarshal course with students with mixed names",
+		`{
+			"students": [
+				"john doe",
+				{
+					"firstName": "will",
+					"lastName": "smith"
+				}
+			],
+			"year": "third year"
+		}`,
+		generic.Course{[]generic.Name{
+			{&n1, nil},
+			{nil, &generic.NameV2{FirstName: "will", LastName: "smith"}}}, "third year"},
+	},
+}
+
+var courseMarshalTests = []courseMarshalTest{
+	{
+		"marshal course with students with simple names",
+		generic.Course{[]generic.Name{{&n1, nil}}, "first year"},
+		`{"students":["john doe"],"year":"first year"}`,
+	},
+	{
+		"marshal course with students with extended name",
+		generic.Course{[]generic.Name{{nil, &generic.NameV2{FirstName: "will", LastName: "smith"}}}, "second year"},
+		`{"students":[{"firstName":"will","lastName":"smith"}],"year":"second year"}`,
+	},
+	{
+		"marshal course with students with mixed names",
+		generic.Course{[]generic.Name{
+			{&n1, nil},
+			{nil, &generic.NameV2{FirstName: "will", LastName: "smith"}}}, "third year"},
+		`{"students":["john doe",{"firstName":"will","lastName":"smith"}],"year":"third year"}`,
 	},
 }

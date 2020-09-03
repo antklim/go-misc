@@ -51,3 +51,24 @@ func TestMarshalStudent(t *testing.T) {
 		})
 	}
 }
+
+func TestUnmarshallCourse(t *testing.T) {
+	for _, tC := range courseUnmarshalTests {
+		t.Run(tC.desc, func(t *testing.T) {
+			var actual generic.Course
+			err := json.Unmarshal([]byte(tC.payload), &actual)
+			require.NoError(t, err)
+			assert.Equal(t, tC.expected, actual)
+		})
+	}
+}
+
+func TestMarshalCourse(t *testing.T) {
+	for _, tC := range courseMarshalTests {
+		t.Run(tC.desc, func(t *testing.T) {
+			actual, err := json.Marshal(tC.course)
+			require.NoError(t, err)
+			assert.Equal(t, tC.expected, string(actual))
+		})
+	}
+}
