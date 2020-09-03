@@ -5,23 +5,6 @@ import "github.com/antklim/go-misc/generic"
 /**
 Valid JSON payloads
 
-// Student 1
-{
-	"name": "john doe",
-	"year": 1,
-	"faculty": "computer science"
-}
-
-// Student 2
-{
-	"name": {
-		"firstName": "will",
-		"lastName": "smith"
-	},
-	"year": 1,
-	"faculty": "computer science"
-}
-
 // Course 1
 {
 	"students": ["john doe", "will smith"],
@@ -62,6 +45,18 @@ type genericNameMarshalTest struct {
 	expected string
 }
 
+type studentUnmarshalTest struct {
+	desc     string
+	payload  string
+	expected generic.Student
+}
+
+type studentMarshalTest struct {
+	desc     string
+	student  generic.Student
+	expected string
+}
+
 var n1 generic.NameV1 = "john doe"
 
 var genericNameUnmarshalTests = []genericNameUnmarshalTest{
@@ -87,5 +82,42 @@ var genericNameMarshalTests = []genericNameMarshalTest{
 		"marshal name v2",
 		generic.Name{nil, &generic.NameV2{FirstName: "john", LastName: "doe"}},
 		`{"firstName":"john","lastName":"doe"}`,
+	},
+}
+
+var studentUnmarshalTests = []studentUnmarshalTest{
+	{
+		"unmarshal student with simple name",
+		`{
+			"name": "john doe",
+			"year": 1,
+			"faculty": "computer science"
+		}`,
+		generic.Student{generic.Name{&n1, nil}, 1, "computer science"},
+	},
+	{
+		"unmarshal student with extended name",
+		`{
+			"name": {
+				"firstName": "will",
+				"lastName": "smith"
+			},
+			"year": 1,
+			"faculty": "computer science"
+		}`,
+		generic.Student{generic.Name{nil, &generic.NameV2{FirstName: "will", LastName: "smith"}}, 1, "computer science"},
+	},
+}
+
+var studentMarshalTests = []studentMarshalTest{
+	{
+		"marshal student with simple name",
+		generic.Student{generic.Name{&n1, nil}, 1, "computer science"},
+		`{"name":"john doe","year":1,"faculty":"computer science"}`,
+	},
+	{
+		"marshal student with extended name",
+		generic.Student{generic.Name{nil, &generic.NameV2{FirstName: "will", LastName: "smith"}}, 1, "computer science"},
+		`{"name":{"firstName":"will","lastName":"smith"},"year":1,"faculty":"computer science"}`,
 	},
 }
