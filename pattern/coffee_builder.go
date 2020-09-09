@@ -1,8 +1,5 @@
 package pattern
 
-// TODO: Add second type of builder: text/mesage builder that takes different
-// values and output text/message in different formats
-
 // CoffeeBrewer is a coffee builder interface.
 type CoffeeBrewer interface {
 	AddCoffee() CoffeeBrewer

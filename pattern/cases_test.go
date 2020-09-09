@@ -2,13 +2,13 @@ package pattern_test
 
 import "github.com/antklim/go-misc/pattern"
 
-type brewTest struct {
+type baristaTest struct {
 	desc     string
 	brewer   pattern.CoffeeBrewer
 	expected string
 }
 
-var brewTests = []brewTest{
+var baristaTests = []baristaTest{
 	{
 		desc:     "brews v60",
 		brewer:   pattern.NewV60Coffee(),

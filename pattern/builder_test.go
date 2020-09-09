@@ -8,7 +8,7 @@ import (
 )
 
 func TestBarista(t *testing.T) {
-	for _, tC := range brewTests {
+	for _, tC := range baristaTests {
 		t.Run(tC.desc, func(t *testing.T) {
 			barista := pattern.NewBarista(tC.brewer)
 			coffee1 := barista.BrewCoffee()
