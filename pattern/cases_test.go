@@ -25,3 +25,12 @@ var baristaTests = []baristaTest{
 		expected: "Latte",
 	},
 }
+
+var textMessageExpected = `recipients: [A B]
+subject: Welcome to builder
+
+	Dear A and B
+Nice text
+With nice footer!`
+
+var jsonMessageExpected = `{"recipients":["A","B"],"subject":"Welcome to builder","greeting":"Dear A and B","body":"Nice text","footer":"With nice footer!"}`
