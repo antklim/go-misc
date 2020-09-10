@@ -1,27 +1,27 @@
-package pattern_test
+package create_test
 
-import "github.com/antklim/go-misc/pattern"
+import "github.com/antklim/go-misc/create"
 
 type baristaTest struct {
 	desc     string
-	brewer   pattern.CoffeeBrewer
+	brewer   create.CoffeeBrewer
 	expected string
 }
 
 var baristaTests = []baristaTest{
 	{
 		desc:     "brews v60",
-		brewer:   pattern.NewV60Coffee(),
+		brewer:   create.NewV60Coffee(),
 		expected: "V60 Coffee",
 	},
 	{
 		desc:     "brews cold brew",
-		brewer:   pattern.NewColdBrew(),
+		brewer:   create.NewColdBrew(),
 		expected: "Cold Brew",
 	},
 	{
 		desc:     "brews latte",
-		brewer:   pattern.NewLatte(),
+		brewer:   create.NewLatte(),
 		expected: "Latte",
 	},
 }

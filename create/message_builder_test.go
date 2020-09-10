@@ -1,14 +1,14 @@
-package pattern_test
+package create_test
 
 import (
 	"testing"
 
-	"github.com/antklim/go-misc/pattern"
+	"github.com/antklim/go-misc/create"
 	"github.com/stretchr/testify/assert"
 )
 
 func TestTextMessageBuilder(t *testing.T) {
-	mb := pattern.NewTextMessageBuilder()
+	mb := create.NewTextMessageBuilder()
 	mb.AddRecipient("A", "B").
 		AddSubject("Welcome to builder").
 		AddGreeting("Dear A and B").
@@ -19,7 +19,7 @@ func TestTextMessageBuilder(t *testing.T) {
 }
 
 func TestJsonMessageBuilder(t *testing.T) {
-	mb := pattern.NewJsonMessageBuilder()
+	mb := create.NewJsonMessageBuilder()
 	mb.AddRecipient("A", "B").
 		AddSubject("Welcome to builder").
 		AddGreeting("Dear A and B").
@@ -32,10 +32,10 @@ func TestJsonMessageBuilder(t *testing.T) {
 }
 
 func TestGetBuilder(t *testing.T) {
-	mb := pattern.GetBuilder(pattern.Json)
+	mb := create.GetBuilder(create.Json)
 	mb.AddBody("Hi there!")
 
-	msg, err := mb.(*pattern.JsonMessage).GetMessage()
+	msg, err := mb.(*create.JsonMessage).GetMessage()
 	assert.NoError(t, err)
 	assert.Equal(t, `{"body":"Hi there!"}`, string(msg))
 }

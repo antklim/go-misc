@@ -1,4 +1,4 @@
-package pattern
+package create
 
 // CoffeeBrewer is a coffee builder interface.
 type CoffeeBrewer interface {

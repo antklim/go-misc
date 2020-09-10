@@ -1,16 +1,16 @@
-package pattern_test
+package create_test
 
 import (
 	"testing"
 
-	"github.com/antklim/go-misc/pattern"
+	"github.com/antklim/go-misc/create"
 	"github.com/stretchr/testify/assert"
 )
 
 func TestBarista(t *testing.T) {
 	for _, tC := range baristaTests {
 		t.Run(tC.desc, func(t *testing.T) {
-			barista := pattern.NewBarista(tC.brewer)
+			barista := create.NewBarista(tC.brewer)
 			coffee1 := barista.BrewCoffee()
 			coffee2 := barista.BrewCoffee()
 			assert.Equal(t, tC.expected, coffee1.Name)
@@ -21,10 +21,10 @@ func TestBarista(t *testing.T) {
 }
 
 func TestBaristaSetBrewer(t *testing.T) {
-	v60Brewer := pattern.NewV60Coffee()
-	cbBrewer := pattern.NewColdBrew()
+	v60Brewer := create.NewV60Coffee()
+	cbBrewer := create.NewColdBrew()
 
-	barista := pattern.NewBarista(v60Brewer)
+	barista := create.NewBarista(v60Brewer)
 	coffee := barista.BrewCoffee()
 	assert.Equal(t, "V60 Coffee", coffee.Name)
 

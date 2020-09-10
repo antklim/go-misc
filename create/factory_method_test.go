@@ -1,14 +1,14 @@
-package pattern_test
+package create_test
 
 import (
 	"testing"
 
-	"github.com/antklim/go-misc/pattern"
+	"github.com/antklim/go-misc/create"
 	"github.com/stretchr/testify/assert"
 )
 
 func TestFacebookConnector(t *testing.T) {
-	c := pattern.NewFacebookConnector("user", "password")
+	c := create.NewFacebookConnector("user", "password")
 	res := c.Login()
 	assert.Equal(t, "logged in to facebook", res)
 
@@ -20,7 +20,7 @@ func TestFacebookConnector(t *testing.T) {
 }
 
 func TestTwitterConnector(t *testing.T) {
-	c := pattern.NewTwitterConnector("apikey")
+	c := create.NewTwitterConnector("apikey")
 	res := c.Login()
 	assert.Equal(t, "logged in to twitter", res)
 
@@ -32,8 +32,8 @@ func TestTwitterConnector(t *testing.T) {
 }
 
 func TestPoster(t *testing.T) {
-	fb := pattern.NewPoster(pattern.NewFacebookPoster("user", "login"))
-	tw := pattern.NewPoster(pattern.NewTwitterPoster("abc123"))
+	fb := create.NewPoster(create.NewFacebookPoster("user", "login"))
+	tw := create.NewPoster(create.NewTwitterPoster("abc123"))
 	fp := fb.Post("blah")
 	tp := tw.Post("booo")
 

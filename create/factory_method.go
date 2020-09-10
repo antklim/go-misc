@@ -1,4 +1,4 @@
-package pattern
+package create
 
 import (
 	"fmt"
