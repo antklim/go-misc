@@ -4,9 +4,8 @@ import (
 	"testing"
 	"time"
 
-	"github.com/stretchr/testify/assert"
-
 	"github.com/antklim/go-misc/option"
+	"github.com/stretchr/testify/assert"
 )
 
 func TestDefaultOptions(t *testing.T) {
