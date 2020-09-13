@@ -25,6 +25,13 @@ func TestValidate(t *testing.T) {
 	}
 }
 
+func SwapCase(t *testing.T) {
+	mw := middleware.HandlerFunc(middleware.SwapCase)
+	actual, err := middleware.Handle("aBcD1234", mw)
+	assert.NoError(t, err)
+	assert.Equal(t, "AbCd1234", actual)
+}
+
 func TestReverse(t *testing.T) {
 	mw := middleware.HandlerFunc(middleware.Reverse)
 	actual, err := middleware.Handle("abcd1234", mw)

@@ -30,9 +30,9 @@ func (e Echo) ServeString(s string) (string, error) {
 
 // Validate is a string validation middleware.
 func Validate(s string) (string, error) {
-	l := len(s)
-	if l < 1 || l > 100 {
-		return "", fmt.Errorf("invalid string length %d", l)
+	n := len(s)
+	if n < 1 || n > 100 {
+		return "", fmt.Errorf("invalid string length %d", n)
 	}
 
 	return s, nil
@@ -46,6 +46,14 @@ func Lowercase(s string) (string, error) {
 // Uppercase is a string uppercase middleware.
 func Uppercase(s string) (string, error) {
 	return strings.ToUpper(s), nil
+}
+
+// SwapCase is a string to swap character case middleware.
+func SwapCase(s string) (string, error) {
+	sc := func(r rune) rune {
+		return r ^ 32
+	}
+	return strings.Map(sc, s), nil
 }
 
 // Reverse is a string reverse middleware.
