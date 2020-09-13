@@ -3,9 +3,8 @@ package middleware_test
 import (
 	"testing"
 
-	"github.com/stretchr/testify/assert"
-
 	"github.com/antklim/go-misc/middleware"
+	"github.com/stretchr/testify/assert"
 )
 
 func TestEcho(t *testing.T) {
@@ -25,6 +24,18 @@ func TestValidate(t *testing.T) {
 	}
 }
 
+func TestLowerCase(t *testing.T) {
+	actual, err := middleware.Handle("aBcD1234", middleware.Lowercase())
+	assert.NoError(t, err)
+	assert.Equal(t, "abcd1234", actual)
+}
+
+func TestUpperCase(t *testing.T) {
+	actual, err := middleware.Handle("aBcD1234", middleware.Uppercase())
+	assert.NoError(t, err)
+	assert.Equal(t, "ABCD1234", actual)
+}
+
 func TestSwapCase(t *testing.T) {
 	mw := middleware.HandlerFunc(middleware.SwapCase)
 	actual, err := middleware.Handle("aBcD1234", mw)
@@ -39,9 +50,16 @@ func TestReverse(t *testing.T) {
 	assert.Equal(t, "4321dcba", actual)
 }
 
-func TestWrap(t *testing.T) {
-	mw := middleware.HandlerFunc(middleware.Wrap)
-	actual, err := middleware.Handle("hi wrap", mw)
+func TestDefaultStrWrapper(t *testing.T) {
+	echoMw := middleware.Echo{}
+	actual, err := middleware.Handle("hi wrap", middleware.DefaultStrWrapper(echoMw))
 	assert.NoError(t, err)
 	assert.Equal(t, "[hi wrap]", actual)
 }
+
+// func TestChain(t *testing.T) {
+// 	echoMw := middleware.Echo{}
+// 	actual, err := middleware.Handle("Hi Middleware", middleware.Chain(echoMw, ))
+// 	assert.NoError(t, err)
+// 	assert.Equal(t, "Hi Middleware", actual)
+// }

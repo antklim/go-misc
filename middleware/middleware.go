@@ -5,7 +5,21 @@ import (
 	"strings"
 )
 
-// Chain middlewares
+/**
+TODO: Wrapper
+			Wrapper(a, b, c)
+				Execution flow:
+					c (before invoking handler) ->
+					b  (before invoking handler) ->
+					a ->
+					b deferred functions ->
+					c deferred functions
+
+TODO: Chain
+			Chain(a, b, c)
+				Execution flow:
+					a -> b -> c
+*/
 
 // Handler interface that should be implemented by middlewares.
 type Handler interface {
@@ -18,6 +32,18 @@ type HandlerFunc func(s string) (string, error)
 // ServeString implements Handler interface.
 func (f HandlerFunc) ServeString(s string) (string, error) {
 	return f(s)
+}
+
+type wrap func(Handler) Handler
+
+// Wrap chains middleware calls.
+func Wrap(handlers ...Handler) Handler {
+	var w wrap
+	var r Handler
+	for _, h := range handlers {
+		r = w(h)
+	}
+	return r
 }
 
 // Echo echo middleware.
@@ -39,13 +65,17 @@ func Validate(s string) (string, error) {
 }
 
 // Lowercase is a string lowercase middleware.
-func Lowercase(s string) (string, error) {
-	return strings.ToLower(s), nil
+func Lowercase() HandlerFunc {
+	return HandlerFunc(func(s string) (string, error) {
+		return strings.ToLower(s), nil
+	})
 }
 
 // Uppercase is a string uppercase middleware.
-func Uppercase(s string) (string, error) {
-	return strings.ToUpper(s), nil
+func Uppercase() HandlerFunc {
+	return HandlerFunc(func(s string) (string, error) {
+		return strings.ToUpper(s), nil
+	})
 }
 
 // SwapCase is a string to swap character case middleware.
@@ -71,12 +101,57 @@ func Reverse(s string) (string, error) {
 	return string(runes), nil
 }
 
-// Wrap is a wrap middleware.
-func Wrap(s string) (string, error) {
-	return fmt.Sprintf("[%s]", s), nil
+// DefaultStrWrapper is a default string wrapper middleware.
+func DefaultStrWrapper(h Handler) Handler {
+	return HandlerFunc(func(s string) (string, error) {
+		var b strings.Builder
+		if _, err := b.WriteRune('['); err != nil {
+			return "", err
+		}
+
+		ss, err := h.ServeString(s)
+		if err != nil {
+			return "", err
+		}
+
+		if _, err := b.WriteString(ss); err != nil {
+			return "", err
+		}
+
+		if _, err := b.WriteRune(']'); err != nil {
+			return "", err
+		}
+
+		return b.String(), nil
+	})
 }
 
-// Handle entry point to middleware shocase.
+// StrWrapper wraps string with left and right strings.
+func StrWrapper(h Handler, lw, rw string) Handler {
+	return HandlerFunc(func(s string) (string, error) {
+		var b strings.Builder
+		if _, err := b.WriteString(lw); err != nil {
+			return "", err
+		}
+
+		ss, err := h.ServeString(s)
+		if err != nil {
+			return "", err
+		}
+
+		if _, err := b.WriteString(ss); err != nil {
+			return "", err
+		}
+
+		if _, err := b.WriteString(rw); err != nil {
+			return "", err
+		}
+
+		return b.String(), nil
+	})
+}
+
+// Handle entry point to middleware showcase.
 func Handle(s string, handler Handler) (string, error) {
 	return handler.ServeString(s)
 }
