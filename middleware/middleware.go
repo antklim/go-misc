@@ -51,7 +51,12 @@ func Uppercase(s string) (string, error) {
 // SwapCase is a string to swap character case middleware.
 func SwapCase(s string) (string, error) {
 	sc := func(r rune) rune {
-		return r ^ 32
+		switch {
+		case r >= 'a' && r <= 'z', r >= 'A' && r <= 'Z':
+			return r ^ 32
+		default:
+			return r
+		}
 	}
 	return strings.Map(sc, s), nil
 }
