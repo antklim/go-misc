@@ -15,6 +15,23 @@ func TestEcho(t *testing.T) {
 	assert.Equal(t, "hi echo", actual)
 }
 
+func TestValidate(t *testing.T) {
+	mw := middleware.HandlerFunc(middleware.Validate)
+	for _, tC := range validateTests {
+		t.Run(tC.desc, func(t *testing.T) {
+			_, err := middleware.Handle(tC.s, mw)
+			assert.EqualError(t, err, tC.expected)
+		})
+	}
+}
+
+func TestReverse(t *testing.T) {
+	mw := middleware.HandlerFunc(middleware.Reverse)
+	actual, err := middleware.Handle("abcd1234", mw)
+	assert.NoError(t, err)
+	assert.Equal(t, "4321dcba", actual)
+}
+
 func TestWrap(t *testing.T) {
 	mw := middleware.HandlerFunc(middleware.Wrap)
 	actual, err := middleware.Handle("hi wrap", mw)

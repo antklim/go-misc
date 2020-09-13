@@ -2,13 +2,9 @@ package middleware
 
 import (
 	"fmt"
+	"strings"
 )
 
-// Implement middleware that validates string length > 0 & < 100
-// Implement middleware that trims string
-// Implement middleware that UPPERCASE string
-// Implement middleware that lowercase string
-// Implement middleware that reverse string
 // Chain middlewares
 
 // Handler interface that should be implemented by middlewares.
@@ -30,6 +26,36 @@ type Echo struct{}
 // ServeString implements Handler interface.
 func (e Echo) ServeString(s string) (string, error) {
 	return s, nil
+}
+
+// Validate is a string validation middleware.
+func Validate(s string) (string, error) {
+	l := len(s)
+	if l < 1 || l > 100 {
+		return "", fmt.Errorf("invalid string length %d", l)
+	}
+
+	return s, nil
+}
+
+// Lowercase is a string lowercase middleware.
+func Lowercase(s string) (string, error) {
+	return strings.ToLower(s), nil
+}
+
+// Uppercase is a string uppercase middleware.
+func Uppercase(s string) (string, error) {
+	return strings.ToUpper(s), nil
+}
+
+// Reverse is a string reverse middleware.
+func Reverse(s string) (string, error) {
+	runes := []rune(s)
+	n := len(runes)
+	for i := 0; i < n/2; i++ {
+		runes[i], runes[n-1-i] = runes[n-1-i], runes[i]
+	}
+	return string(runes), nil
 }
 
 // Wrap is a wrap middleware.
