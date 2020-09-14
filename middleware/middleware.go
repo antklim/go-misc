@@ -21,6 +21,10 @@ TODO: Chain
 					a -> b -> c
 */
 
+////////////////////////////////////////////////////////////////////////////////
+// Types
+////////////////////////////////////////////////////////////////////////////////
+
 // Handler interface that should be implemented by middlewares.
 type Handler interface {
 	ServeString(s string) (string, error)
@@ -46,6 +50,13 @@ func Wrap(handlers ...Handler) Handler {
 	return r
 }
 
+////////////////////////////////////////////////////////////////////////////////
+// Middleware implementations
+////////////////////////////////////////////////////////////////////////////////
+
+// Structure implements Handler interface
+// Usage mw := middleware.Struct{}
+
 // Echo echo middleware.
 type Echo struct{}
 
@@ -54,15 +65,8 @@ func (e Echo) ServeString(s string) (string, error) {
 	return s, nil
 }
 
-// Validate is a string validation middleware.
-func Validate(s string) (string, error) {
-	n := len(s)
-	if n < 1 || n > 100 {
-		return "", fmt.Errorf("invalid string length %d", n)
-	}
-
-	return s, nil
-}
+// Functional middleware that implement Handler interface
+// Usage mw := middleware.HFunc()
 
 // Lowercase is a string lowercase middleware.
 func Lowercase() HandlerFunc {
@@ -76,6 +80,19 @@ func Uppercase() HandlerFunc {
 	return HandlerFunc(func(s string) (string, error) {
 		return strings.ToUpper(s), nil
 	})
+}
+
+// Pure functions middleware, requires to be wrapped to HandlerFunc
+// Usage mw := middleware.HandlerFunc(fn)
+
+// Validate is a string validation middleware.
+func Validate(s string) (string, error) {
+	n := len(s)
+	if n < 1 || n > 100 {
+		return "", fmt.Errorf("invalid string length %d", n)
+	}
+
+	return s, nil
 }
 
 // SwapCase is a string to swap character case middleware.
@@ -100,6 +117,8 @@ func Reverse(s string) (string, error) {
 	}
 	return string(runes), nil
 }
+
+// Wrapped middleware
 
 // DefaultStrWrapper is a default string wrapper middleware.
 func DefaultStrWrapper(h Handler) Handler {
