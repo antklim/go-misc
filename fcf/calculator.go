@@ -8,22 +8,22 @@ type Calculator struct {
 	acc float64 // accumalator
 }
 
-type opfunc func(float64, float64) float64
+type opfunc func(float64) float64
 
 // Do ...
-func (c *Calculator) Do(op opfunc, v float64) float64 {
-	c.acc = op(c.acc, v)
+func (c *Calculator) Do(op opfunc) float64 {
+	c.acc = op(c.acc)
 	return c.acc
 }
 
-func Add(a, b float64) float64 {
-	return a + b
+func Add(v float64) opfunc {
+	return opfunc(func(acc float64) float64 { return acc + v })
 }
 
-func Sub(a, b float64) float64 {
-	return a - b
+func Sub(v float64) opfunc {
+	return opfunc(func(acc float64) float64 { return acc - v })
 }
 
-func Mul(a, b float64) float64 {
-	return a * b
+func Mul(v float64) opfunc {
+	return opfunc(func(acc float64) float64 { return acc * v })
 }
