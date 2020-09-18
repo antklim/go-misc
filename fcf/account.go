@@ -3,8 +3,17 @@ package fcf
 import (
 	"errors"
 	"fmt"
-	"sync"
+	"strings"
 	"time"
+)
+
+// TODO: Run benchmark tests to verify there's no race conditions
+// TODO: l = append(l, log(logWithdraw, v)) should be part of ledger
+
+const (
+	logDeposit  = `deposit to account %.3f @%s`
+	logWithdraw = `withdraw from account %.3f @%s`
+	logDividend = `dividend to account %.3f @%s`
 )
 
 var (
@@ -13,25 +22,41 @@ var (
 	errNegativeInterestRate = errors.New("negative interest rate")
 )
 
+type ledger []string
+
+// balanceop is an operation on balance. It gets an argument and returns new balance.
+type balanceop func(float64, *ledger) float64
+
 // Account ...
 type Account struct {
-	mu       sync.Mutex
-	number   string       // account number
-	balance  float64      // account balance
-	ledger   []string     // account operations ledger
-	add      chan float64 // deposit to the account
-	sub      chan float64 // withdraw from the account
-	interest chan float64 // multiply account balance by interest rate
+	number  string         // account number
+	balance float64        // account balance
+	ledger  *ledger        // account operations ledger
+	bops    chan balanceop // balance operations channel
 }
 
-// TODO: Refactor operations code duplication
+func NewAccount(number string) *Account {
+	bopsCh := make(chan balanceop)
+	a := &Account{
+		number: number,
+		bops:   bopsCh,
+		ledger: new(ledger),
+	}
+	go a.loop()
+	return a
+}
 
 func (a *Account) Deposit(v float64) error {
 	if v < 0 {
 		return errNegativeDeposit
 	}
 
-	a.add <- v
+	a.bops <- func(b float64, l *ledger) float64 {
+		*l = append(*l, log(logDeposit, v))
+		b += v
+		return b
+	}
+
 	return nil
 }
 
@@ -40,7 +65,12 @@ func (a *Account) Withdraw(v float64) error {
 		return errNegativeWithdraw
 	}
 
-	a.sub <- v
+	a.bops <- func(b float64, l *ledger) float64 {
+		*l = append(*l, log(logDeposit, v))
+		b -= v
+		return b
+	}
+
 	return nil
 }
 
@@ -49,44 +79,30 @@ func (a *Account) Dividend(v float64) error {
 		return errNegativeInterestRate
 	}
 
-	a.interest <- v
+	a.bops <- func(b float64, l *ledger) float64 {
+		*l = append(*l, log(logDeposit, v))
+		b *= 1 + v/100
+		return b
+	}
+
 	return nil
 }
 
+func (a Account) Balance() float64 {
+	return a.balance
+}
+
+func (a Account) Ledger() string {
+	return strings.Join(*a.ledger, ",")
+}
+
 func (a *Account) loop() {
-	for {
-		select {
-		case v := <-a.add:
-			a.mu.Lock()
-			defer a.mu.Unlock()
-			a.balance += v
-			a.ledger = append(a.ledger, depositLog(v))
-		case v := <-a.sub:
-			a.mu.Lock()
-			defer a.mu.Unlock()
-			a.balance -= v
-			a.ledger = append(a.ledger, withdrawLog(v))
-		case v := <-a.interest:
-			a.mu.Lock()
-			defer a.mu.Unlock()
-			a.balance *= 1 + v/100
-			a.ledger = append(a.ledger, dividendLog(v))
-		}
+	for op := range a.bops {
+		a.balance = op(a.balance, a.ledger)
 	}
 }
 
-// TODO: Remove log code duplications
-func depositLog(v float64) string {
+func log(f string, v float64) string {
 	ts := time.Now().UTC().Round(time.Microsecond).Format(time.RFC3339)
-	return fmt.Sprintf("deposit to account %.3f @%s", v, ts)
-}
-
-func withdrawLog(v float64) string {
-	ts := time.Now().UTC().Round(time.Microsecond).Format(time.RFC3339)
-	return fmt.Sprintf("withdraw from account %.3f @%s", v, ts)
-}
-
-func dividendLog(v float64) string {
-	ts := time.Now().UTC().Round(time.Microsecond).Format(time.RFC3339)
-	return fmt.Sprintf("dividends to account %.3f @%s", v, ts)
+	return fmt.Sprintf(f, v, ts)
 }
