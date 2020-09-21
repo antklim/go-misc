@@ -91,4 +91,20 @@ var accountErrorCases = []accountErrorCase{
 		balance: 0.0,
 		err:     "negative interest rate",
 	},
+	// {
+	// 	desc: "withdraw greater than balance is not valid",
+	// },
+}
+
+var accountBenchmarkTestCases = []op{
+	{v: 1.0, t: deposit},
+	{v: 12.23, t: deposit},
+	{v: 3.4, t: deposit},
+	{v: 6.11, t: deposit},
+	{v: 7.23, t: deposit},
+	{v: 1.0, t: dividend},
+	{v: 13.553, t: withdraw},
+	{v: 3.4, t: withdraw},
+	{v: 6.11, t: deposit},
+	{v: 7.23, t: deposit},
 }

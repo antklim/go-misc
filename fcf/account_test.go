@@ -60,3 +60,23 @@ func TestAccountOperationsErrors(t *testing.T) {
 		})
 	}
 }
+
+func BenchmarkAccountOperations(b *testing.B) {
+	acc := fcf.NewAccount("123")
+	for i := 0; i < b.N; i++ {
+		for _, tC := range accountBenchmarkTestCases {
+			var err error
+			switch tC.t {
+			case deposit:
+				err = acc.Deposit(tC.v)
+			case withdraw:
+				err = acc.Withdraw(tC.v)
+			case dividend:
+				err = acc.Dividend(tC.v)
+			}
+			if err != nil {
+				b.Error(err)
+			}
+		}
+	}
+}
