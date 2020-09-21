@@ -27,15 +27,18 @@ func TestAccountOperations(t *testing.T) {
 		time.Sleep(time.Millisecond)
 	}
 
+	assertLedger := func(t *testing.T, entries []string, ledger string) {
+		for _, entry := range entries {
+			assert.Contains(t, ledger, entry)
+		}
+	}
+
 	for _, tC := range accountTestCases {
 		t.Run(tC.desc, func(t *testing.T) {
 			acc := fcf.NewAccount("123")
 			runOps(acc, tC.ops)
 			assert.InDelta(t, tC.balance, acc.Balance(), 0.001)
-			ledger := acc.Ledger()
-			for _, entry := range tC.ledger {
-				assert.Contains(t, ledger, entry)
-			}
+			assertLedger(t, tC.ledger, acc.Ledger())
 		})
 	}
 }

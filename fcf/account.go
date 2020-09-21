@@ -10,9 +10,9 @@ import (
 // TODO: Run benchmark tests to verify there's no race conditions
 
 const (
-	logDeposit  = `deposit to account %.3f @%s`
-	logWithdraw = `withdraw from account %.3f @%s`
-	logDividend = `dividend to account %.3f @%s`
+	logDeposit  = "deposit to account %.3f @%s"
+	logWithdraw = "withdraw from account %.3f @%s"
+	logDividend = "dividend to account %.3f @%s"
 )
 
 var (
@@ -103,7 +103,7 @@ func (a Account) Balance() float64 {
 
 // Ledger ...
 func (a Account) Ledger() string {
-	return strings.Join(a.ledger, ",")
+	return strings.Join(a.ledger, ", ")
 }
 
 func (a *Account) loop() {
