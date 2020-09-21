@@ -42,3 +42,21 @@ func TestAccountOperations(t *testing.T) {
 		})
 	}
 }
+
+func TestAccountOperationsErrors(t *testing.T) {
+	for _, tC := range accountErrorCases {
+		t.Run(tC.desc, func(t *testing.T) {
+			acc := fcf.NewAccount("123")
+			var err error
+			switch tC.op.t {
+			case deposit:
+				err = acc.Deposit(tC.op.v)
+			case withdraw:
+				err = acc.Withdraw(tC.op.v)
+			case dividend:
+				err = acc.Dividend(tC.op.v)
+			}
+			assert.EqualError(t, err, tC.err)
+		})
+	}
+}

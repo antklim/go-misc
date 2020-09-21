@@ -41,7 +41,7 @@ var accountTestCases = []accountTestCase{
 		ledger:  []string{"deposit to account 0.000 @"},
 	},
 	{
-		desc:    "after deposit to account, withdraw will decrease account balance",
+		desc:    "after deposit to account, withdraw decreases account balance",
 		ops:     []op{{v: 13.33, t: deposit}, {v: 11.45, t: withdraw}},
 		balance: 1.88,
 		ledger:  []string{"deposit to account 13.330 @", "withdraw from account 11.450 @"},
