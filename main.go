@@ -3,7 +3,7 @@ package main
 import (
 	"fmt"
 
-	"github.com/antklim/go-misc/fuzztest/tax"
+	"github.com/antklim/go-misc/tax"
 )
 
 func main() {

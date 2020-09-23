@@ -1,9 +1,5 @@
 package tax
 
-// Tax agency provides tax strategy
-// Tax strategies differ from year to year
-// Tax calculator takes year and income and returns tax information
-
 // Period represents tax period.
 type Period string
 
