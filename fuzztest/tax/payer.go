@@ -47,9 +47,18 @@ func (p *Payer) PayTaxes(period Period, v float64) {
 		return
 	}
 
+	if p.taxesPaid == nil {
+		p.taxesPaid = make(map[Period]float64)
+	}
+
 	fmt.Printf("payer with TFN %s paid %.3f in %s tax period\n", p.TFN, v, period)
 	p.taxesPaid[period] = v
 	return
+}
+
+// IsResident returns whether payer resident.
+func (p Payer) IsResident() bool {
+	return p.Residency == AU
 }
 
 // Income returns payer income for period.

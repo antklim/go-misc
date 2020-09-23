@@ -19,9 +19,16 @@ type PeriodCalculator map[Period]Calculator
 type Calculator func(p Payer) float64
 
 // Agency represents tax agency that collects taxes.
-type Agency string
+type Agency struct{}
 
-// TaxCalcuator returns tax calculator for a period.
-func (a Agency) TaxCalcuator(p Period) Calculator {
-	return nil
+// FindCalcuator returns tax calculator for a period.
+func (a Agency) FindCalcuator(p Period) Calculator {
+	switch p {
+	default:
+		return DefaultCalc
+	case TP2019:
+		return Calc2019
+	case TP2020:
+		return Calc2020
+	}
 }
