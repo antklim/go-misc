@@ -7,6 +7,11 @@ package tax
 // Period represents tax period.
 type Period string
 
+const (
+	TP2019 Period = "2019"
+	TP2020 Period = "2020"
+)
+
 // Income represents payer income for tax period.
 type Income map[Period]float64
 
@@ -14,6 +19,12 @@ type Income map[Period]float64
 type Payer struct {
 	tfn    string
 	income Income
+}
+
+// Income returns payer income in period.
+func (p Payer) Income(period Period) (float64, bool) {
+	income, ok := p.income[period]
+	return income, ok
 }
 
 // PeriodCalculator represents tax periods and related calculators.
