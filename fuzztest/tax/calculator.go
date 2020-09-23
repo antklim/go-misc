@@ -1,6 +1,5 @@
 package tax
 
-// TODO: move income retrieve to the caller
 // TODO: move tax table to literals
 
 // ResidentTax2019 tax calculator for 2019-2020 financial year for resident.
